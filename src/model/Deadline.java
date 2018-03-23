@@ -1,4 +1,4 @@
-package objects;
+package model;
 
 import java.time.Duration;
 import java.util.Date;

@@ -1,4 +1,4 @@
-package session;
+package telegram.session;
 
 import java.util.HashSet;
 import java.util.Set;
