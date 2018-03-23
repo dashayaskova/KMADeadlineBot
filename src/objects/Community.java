@@ -32,12 +32,12 @@ public class Community implements Comparable<Community> {
 		admins.add(creator); // creator is an admin too
 	}
 
-	/** PLEASE, WRITE THEM **/
-
 	// getters and setters
 
 	public String getName() { return name; }
+	
 	public User getCreator() { return creator; }
+	
 	public Set<Deadline> getDeadlines() { return deadlines; }
 
 	public Set<Long> getDeadlineIds() {
