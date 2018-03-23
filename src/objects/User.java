@@ -3,87 +3,90 @@ package objects;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class User {
 
 	// data fields
-	
+
 	/** this value is recieve from telegram */
 	private final long id; // is used as a primary key in the database
-	private Map<Deadline, List<Date>> deadlineDates; // times to remind
 
-	// constructors with parameters
+	private Map<Deadline, Set<Date>> deadlineDates; // times to remind
+
+	// constructors
+
+	/** creates User instance with empty deadlineDates */
 	public User(long id) {
-		this.id = id;
-		this.userCommunities = new HashSet<Community>();
-		this.userDeadlines = new HashSet<Deadline>();
+		this(id, new HashMap<>());
 	}
 
-	public User(long id, Map<Deadline, List<Date>> deadlineDates) {
+	public User(long id, Map<Deadline, Set<Date>> deadlineDates) {
 		this.id = id;
 		this.deadlineDates = deadlineDates;
 	}
 
 	// getters and setters
+
 	public long getId() {
-		return this.userID;
+		return id;
 	}
 
 	public Set<Community> getCommunities() {
-		return userCommunities;
+		return new HashSet<>(); // TODO implement
 	}
 
-	/** REWRITE **/
-	public Set<Long> getCommunitiesID() {
-		return new HashSet<Long>();
+	public Set<String> getCommunityNames() {
+		return getCommunities().stream().map(Community::getName).collect(Collectors.toSet());
 	}
 
-	/** REWRITE **/
-	public Map<Deadline, List<Date>> getDeadlineStates() {
-		return new HashMap<Deadline, List<Date>>();
+	public Map<Deadline, Set<Date>> getDeadlineDate() {
+		// TODO return a copy of the deadlineDates
+		return deadlineDates;
 	}
 
-	/** REWRITE **/
-	public Map<Long, List<Date>> getDeadlineIDStates() {
-		return new HashMap<Long, List<Date>>();
+	public Map<Long, Set<Date>> getDeadlineIdStates() {
+		Map<Long, Set<Date>> result = new HashMap<>();
+
+		deadlineDates.forEach((deadline, dateSet) -> {
+			long deadlineId = deadline.getId();
+			result.put(deadlineId, dateSet);
+		});
+		return result;
+	}
+	
+	public void addDeadlineState(Deadline deadline, Date date) {
+		 
 	}
 
 	public Set<Deadline> getDeadlines() {
-		return userDeadlines;
+		return null; // TODO implement
 	}
 
-	/** REWRITE **/
 	public Set<Long> getDeadlinesID() {
-		return new HashSet<Long>();
+		return getDeadlines().stream().map(Deadline::getId).collect(Collectors.toSet());
 	}
 
-	/** REWRITE **/
 	public Set<Community> getCommunitiesWhereAdmin() {
-		return new HashSet<Community>();
+		return new HashSet<>(); // TODO implement
 	}
 
-	/** REWRITE **/
-	public Set<Long> getCommunitiesIDWhereAdmin() {
-		return new HashSet<Long>();
+	public Set<String> getCommunitieIdsWhereAdmin() {
+		return getCommunitiesWhereAdmin().stream().map(Community::getName).collect(Collectors.toSet());
 	}
 
-	// methods
 	public boolean isGlobalAdmin() {
-		// TODO implement
-		return true;
+		return true; // TODO implement
 	}
 
 	public boolean isAdmin(Community community) {
-		// TODO implement
-		return true;
+		return community.getAdmins().contains(this);
 	}
-	
-	
+
 	// methods from class Object
-	
+
 	/** compare by user's id */
 	@Override
 	public boolean equals(Object object) {
@@ -97,9 +100,9 @@ public class User {
 	public int hashCode() {
 		return String.valueOf(id).hashCode();
 	}
-	
+
 	@Override
 	public String toString() {
-		return Long.toString(id);
+		return "User: " + Long.toString(id);
 	}
 }
