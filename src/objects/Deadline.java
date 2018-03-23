@@ -8,21 +8,14 @@ import java.util.Set;
 public class Deadline {
 
 	// data fields
-	private long deadlineID;
-	private Date deadlineDate;
-	private String deadlineDescription;
-	private long deadlineChatID;
-	private Set<Long> deadlineMessagesID;
+	private long id;
+	private Date date;
+	private String description;
+	private long chatId;
+	private Set<Long> messagesId;
 	
 	// default constructor
-	/** REWRITE **/
-	public Deadline() {
-		this.deadlineID = 0L;
-		this.deadlineDate = new Date();
-		this.deadlineDescription = "";
-		this.deadlineChatID = 0L;
-		this.deadlineMessagesID = new HashSet<Long>();
-	}
+
 	
 	// constructors with parameters
 	/** REWRITE **/
@@ -55,7 +48,7 @@ public class Deadline {
 	/**		FINISH ALL CONSTRUCTORS		**/
 	
 	// getters and setters
-	public long getID() {
+	public long getId() {
 		return this.deadlineID;
 	}
 	

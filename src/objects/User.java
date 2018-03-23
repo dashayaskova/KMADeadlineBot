@@ -10,9 +10,10 @@ import java.util.Set;
 public class User {
 	
 	// data fields
-	private long userID;
-	private Set<Community> userCommunities;
-	private Set<Deadline> userDeadlines;
+	
+	private final long id;
+	private Set<Community> communities;
+	private Set<Deadline> deadlines;
 	
 	// default constructor
 	public User() {
@@ -29,7 +30,7 @@ public class User {
 	}
 	
 	// getters and setters
-	public long getID() {
+	public long getId() {
 		return this.userID;
 	}
 	
