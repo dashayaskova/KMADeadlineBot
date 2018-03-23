@@ -14,6 +14,7 @@ public class Community {
 	private User communityCreator;
 	
 	// default constructor
+	// test comment
 	public Community() {
 		this.communityID = 0L;
 		this.communityName = "";
