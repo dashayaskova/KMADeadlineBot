@@ -11,10 +11,11 @@ public class Community implements Comparable<Community> {
 	/** this value is unique and it is used as a primary key in the database */
 	private String name;
 
-	/** RECONSIDER SETS OF USERS INSTEAD OF LONGS **/
 	private Set<User> members;
 	private Set<User> admins;
+	
 	private final User creator;
+	
 	private Set<Deadline> deadlines;
 
 	/** creates new community with empty set of members and admins */
