@@ -1,4 +1,4 @@
-package telegram.session;
+package telegram.session.api;
 
 import org.telegram.telegrambots.api.objects.Update;
 
