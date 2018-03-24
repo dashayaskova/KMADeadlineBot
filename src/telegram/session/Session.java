@@ -2,61 +2,41 @@ package telegram.session;
 
 import org.telegram.telegrambots.api.objects.Update;
 
-public class Session {
+public abstract class Session {
 
 	// unique value
-	private final long userId;
-
-	// listeners with default values
-	private UpdateListener updateListener = (update) -> {};
-	private UpdateListener errorListener = (update) -> {};
-
+	public final long userId;
+	
 	// you can check how many times this session was executed
-	private int pointer = 0;
+	// there is no auto increment of this value
+	public int pointer = 0;
 
-	public int getPointer() {
-		return pointer;
-	}
-	
-	public void setPointer(int pointer) {
-		this.pointer = pointer;
-	}
-	
-	// constructor with default update and error listeners
+	// constructor
 	public Session(long userId) {
 		this.userId = userId;
 	}
 
-	public long getUserId() {
-		return userId;
+	public abstract void updateListener(Update update);
+
+	// default implementation where errorListener ignore errors
+	public void errorListener(Update update) {
+		// if you need the error listener - implement this method
 	}
 
-	// update listener setter
-	public Session onUpdate(UpdateListener listener) {
-		updateListener = listener;
-		return this;
-	}
-
-	// error listener setter
-	public Session onError(UpdateListener listener) {
-		errorListener = listener;
-		return this;
-	}
-
-	public void execute(Update update) {
+	public final void execute(Update update) {
 		try {
-			updateListener.execute(update);
+			updateListener(update);
 		} catch (Exception exception) {
-			errorListener.execute(update);
+			errorListener(update);
 		}
 	}
-	
-	
+
 	// Override equals and hashCode methods
 	// to use Set<Session> in session container
-	
+
 	@Override
 	public boolean equals(Object object) {
+		// sessions are equals if their user ids are equals
 		if (object instanceof Session) {
 			Session session = (Session) object;
 			return this.userId == session.userId;

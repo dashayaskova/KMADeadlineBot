@@ -9,12 +9,12 @@ public class SessionContainer {
 	private static Set<Session> sessions = new HashSet<>();
 
 	public static void add(Session session) {
-		if (contains(session.getUserId())) {
-			remove(session.getUserId());
+		if (contains(session.userId)) {
+			remove(session.userId);
 		}
 		sessions.add(session);
 	}
-
+	
 	public static void remove(long userId) {
 		if (contains(userId)) {
 			Session session = get(userId);
@@ -23,20 +23,13 @@ public class SessionContainer {
 	}
 
 	public static boolean contains(long userId) {
-		return sessions.stream().anyMatch((session) -> session.getUserId() == userId);
+		return sessions.stream().anyMatch((session) -> session.userId == userId);
 	}
 
 	public static Session get(long userId) {
 		if (contains(userId)) {
-			return sessions.stream().filter((session) -> session.getUserId() == userId).findAny().get();
+			return sessions.stream().filter((session) -> session.userId == userId).findAny().get();
 		}
 		return null;
-	}
-
-	public static Session create(long userId) {
-		Session session = new Session(userId);
-		remove(session.getUserId());
-		add(session);
-		return session;
 	}
 }
