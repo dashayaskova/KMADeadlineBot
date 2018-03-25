@@ -1,8 +1,0 @@
-/**
- * 
- */
-/**
- * @author new
- *
- */
-package telegram;
