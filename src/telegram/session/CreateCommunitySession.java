@@ -13,7 +13,7 @@ public class CreateCommunitySession extends Session{
 
 	@Override
 	public void updateListener(Update update) {
-		// TODO Auto-generated method stub
+		System.out.println("hello");
 		
 	}
 
