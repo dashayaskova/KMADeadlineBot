@@ -6,7 +6,7 @@
 ## how to install?
 1. import this project into [eclipse](https://eclipse.org)
 1. install [mysql server](https://mysql.com)
-1. run next code in your 'mysql command line client':
+1. run next code:
 ```mysql
 create database KMADeadlineBot;
 
