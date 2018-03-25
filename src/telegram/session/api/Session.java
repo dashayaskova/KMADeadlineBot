@@ -6,6 +6,10 @@ public abstract class Session {
 
 	// unique value
 	public final long userId;
+	
+	// you can check how many times this session was executed
+	// there is no auto increment of this value
+	public int pointer = 0;
 
 	// constructor
 	public Session(long userId) {

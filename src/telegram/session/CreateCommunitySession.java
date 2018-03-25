@@ -14,13 +14,8 @@ public class CreateCommunitySession extends Session {
 
 	@Override
 	public void updateListener(Update update) {
-<<<<<<< HEAD
 		// TODO Auto-generated method stub
 
-=======
-		System.out.println("hello");
-		
->>>>>>> a54948bb1686a29d640b4a55e7d8fb136d2f3b5d
 	}
 
 }
