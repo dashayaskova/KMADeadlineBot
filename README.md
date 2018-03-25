@@ -14,7 +14,8 @@
 1. implement methods in classes `User`, `Community`, `Deadline`
 1. create `session` package with classes `Session`, `SessionContainer` and interface `UpdateListener`
 
-`create database KMADeadlineBot;
+```mysql
+create database KMADeadlineBot;
 
 use KMADeadlineBot;
 
@@ -78,4 +79,4 @@ create table admin_community(
     primary key(admin_community_id),
     foreign key(user_id) references user(user_id),
     foreign key(community_id) references community(community_id)
-);`
+);```
