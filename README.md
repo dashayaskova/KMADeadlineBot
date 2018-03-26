@@ -8,70 +8,69 @@
 1. install [mysql server](https://mysql.com)
 1. run next code:
 ```mysql
-create database KMADeadlineBot;
+CREATE DATABASE KMADeadlineBot;
 
-use KMADeadlineBot;
+USE KMADeadlineBot;
 
-create table user (
-  user_id bigint not null,
-    primary key(user_id)
-  );
+CREATE TABLE user (
+	user_id BIGINT NOT NULL,
+    PRIMARY KEY(user_id)
+	);
     
-create table global_admin(
-  user_id bigint not null,
-    foreign key(user_id) references user(user_id)
+CREATE TABLE global_admin(
+	user_id BIGINT NOT NULL,
+    FOREIGN KEY(user_id) REFERENCES user(user_id)
     );
 
-create table community(
-  community_id bigint not null auto_increment,
-    name_sn char(255) not null,
-    date_created_dt date,
-    primary key(community_id)
-  );
+CREATE TABLE community(
+    name_sn CHAR(255) NOT NULL,
+    date_created_dt DATE,
+    PRIMARY KEY(name_sn)
+	);
     
-create table deadline(
-  deadline_id bigint not null auto_increment,
-    date_of_deadline datetime not null,
-    community_id bigint not null,
-    primary key(deadline_id),
-    foreign key(community_id) references community(community_id)
+CREATE TABLE deadline(
+	deadline_id BIGINT NOT NULL AUTO_INCREMENT,
+    date_of_deadline DATETIME NOT NULL,
+    name_sn CHAR(255) NOT NULL,
+    PRIMARY KEY(deadline_id),
+    FOREIGN KEY(name_sn) REFERENCES community(name_sn)
     );
     
-create table deadline_message(
-  deadline_message_id bigint not null auto_increment,
-    message_id bigint not null,
-    chat_id bigint not null,
-    deadline_id bigint not null,
-    primary key(deadline_message_id),
-    foreign key(deadline_id) references deadline(deadline_id)
-  );
+CREATE TABLE deadline_message(
+	deadline_message_id BIGINT NOT NULL AUTO_INCREMENT,
+    message_id BIGINT NOT NULL,
+    chat_id BIGINT NOT NULL,
+    deadline_id BIGINT NOT NULL,
+    PRIMARY KEY(deadline_message_id),
+    FOREIGN KEY(deadline_id) REFERENCES deadline(deadline_id)
+	);
 
-create table deadline_date(
-  deadline_date_id bigint not null auto_increment,
-    user_id bigint not null,
-    deadline_id bigint not null,
-    date datetime not null,
-    primary key(deadline_date_id),
-    foreign key(user_id) references user(user_id),
-    foreign key(deadline_id) references deadline(deadline_id)
-  );
+CREATE TABLE deadline_date(
+	deadline_date_id BIGINT NOT NULL AUTO_INCREMENT,
+    user_id BIGINT NOT NULL,
+    deadline_id BIGINT NOT NULL,
+    date DATETIME NOT NULL,
+    PRIMARY KEY(deadline_date_id),
+    FOREIGN KEY(user_id) REFERENCES user(user_id),
+    FOREIGN KEY(deadline_id) REFERENCES deadline(deadline_id)
+	);
 
-create table user_community(
-  user_community_id bigint not null auto_increment,
-    user_id bigint not null,
-    community_id bigint not null,
-    primary key(user_community_id),
-    foreign key(user_id) references user(user_id),
-    foreign key(community_id) references community(community_id)
-  );
+CREATE TABLE user_community(
+	user_community_id BIGINT NOT NULL AUTO_INCREMENT,
+    user_id BIGINT NOT NULL,
+    name_sn CHAR(255) NOT NULL,
+    PRIMARY KEY(user_community_id),
+    FOREIGN KEY(user_id) REFERENCES user(user_id),
+    FOREIGN KEY(name_sn) REFERENCES community(name_sn)
+	);
     
-create table admin_community(
-  admin_community_id bigint not null auto_increment,
-    user_id bigint not null,
-    community_id bigint not null,
-    primary key(admin_community_id),
-    foreign key(user_id) references user(user_id),
-    foreign key(community_id) references community(community_id)
+CREATE TABLE admin_community(
+	admin_community_id BIGINT NOT NULL AUTO_INCREMENT,
+    user_id BIGINT NOT NULL,
+    name_sn CHAR(255) NOT NULL,
+    PRIMARY KEY(admin_community_id),
+    FOREIGN KEY(user_id) REFERENCES user(user_id),
+    FOREIGN KEY(name_sn) REFERENCES community(name_sn)
 );
 ```
 
