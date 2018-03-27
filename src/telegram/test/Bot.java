@@ -33,6 +33,6 @@ public class Bot extends TelegramLongPollingBot{
 	@Override
 	public String getBotToken() {
 		// insert bot api token from telegram chat or trello board
-		return "487263207:AAGa-omErg0RcI3x-21BlqjpISlzhsaS9y4";
+		return "...";
 	}
 }
