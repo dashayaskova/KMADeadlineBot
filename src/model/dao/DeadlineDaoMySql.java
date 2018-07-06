@@ -1,12 +1,13 @@
 package model.dao;
 
 import java.sql.Connection;
-import java.sql.Date;
+import java.util.Date;
 import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Time;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.HashSet;
@@ -17,6 +18,7 @@ import java.util.stream.Stream;
 
 import com.mysql.fabric.jdbc.FabricMySQLDriver;
 
+import model.Community;
 import model.Deadline;
 
 public class DeadlineDaoMySql implements DeadlineDao {
@@ -60,24 +62,19 @@ public class DeadlineDaoMySql implements DeadlineDao {
 		}
 	}
 
-	public static void main(String[] args) {
-		printAll();
-		
-		
-		Set<Long> messageIds = Stream.of(100l, 200l, 300l).collect(Collectors.toSet());
-
-		Deadline deadline = DaoContainer.deadlineDao.create(new Date(1234384348L),
-				"this deadline was created in DeadlieDaoMySql class", "firstcommunity", 424L, messageIds);
-		
-		System.out.println("new deadline: " + deadline);
-		
-		printAll();
-	}
-	
-	private static void printAll() { // TODO remove
-		Set<Deadline> deadlines = DaoContainer.deadlineDao.select();
-		System.out.println(deadlines);
-	}
+	//	public static void main(String[] args) throws SQLException {
+	//		DeadlineDaoMySql dao = new DeadlineDaoMySql();
+	//		dao.openConnection();
+	//		ResultSet set = dao.statement.executeQuery("SELECT date FROM deadline_date;");
+	//		set.next();
+	//		System.out.println(new Time(set.getDate("date").getTime()));
+	//		dao.closeConnection();
+	//	}
+	//	
+	//	private static void printAll() { // TODO remove
+	//		Set<Deadline> deadlines = DaoContainer.deadlineDao.select();
+	//		System.out.println(deadlines);
+	//	}
 	
 	@Override
 	public Deadline create(Date date, String description, String communityName, long chatId, Set<Long> messageIds) {
@@ -94,21 +91,22 @@ public class DeadlineDaoMySql implements DeadlineDao {
 		return deadline;
 	}
 
-	@Override
-	public void insert(Deadline deadline) {
+	//	@Override
+	private void insert(Deadline deadline) {
 		Set<Deadline> deadlineSet = Stream.of(deadline).collect(Collectors.toSet());
 		insert(deadlineSet);
 	}
 
-	@Override
-	public void insert(Set<Deadline> deadlines) {
+	//	@Override
+	private void insert(Set<Deadline> deadlines) {
 		openConnection();
 		deadlines.forEach(deadline -> {
 			try {
 				statement.execute(String.format(
-						"INSERT INTO deadline (deadline_id, date_of_deadline, description_sn, community_name_sn) "
-								+ "VALUES (%d, '%s', '%s', '%s');",
-						deadline.getId(), deadline.getDate(), deadline.getDescription(), deadline.getCommunityName()));
+					"INSERT INTO deadline (deadline_id, date_of_deadline, description_sn, community_name_sn) "
+					+ "VALUES (%d, '%s', '%s', '%s');", deadline.getId(),
+					new java.sql.Date(deadline.getDate().getTime()) + " " + new Time(deadline.getDate().getTime()),
+						deadline.getDescription(), deadline.getCommunityName()));
 
 				for (long messageId : deadline.getMessageIds()) {
 					statement.execute(String.format(
@@ -123,8 +121,8 @@ public class DeadlineDaoMySql implements DeadlineDao {
 					cal.add(Calendar.DATE, -1);
 					
 					statement.execute(String.format(
-							"INSERT INTO deadline_date (user_id, deadline_id, date) VALUES (%d, %d, '%s');",
-							userId, deadline.getId(), new Date(cal.getTimeInMillis())));
+						"INSERT INTO deadline_date (user_id, deadline_id, date) VALUES (%d, %d, '%s');", userId,
+						deadline.getId(), new java.sql.Date(cal.getTimeInMillis()) + " " + new Time(cal.getTimeInMillis())));
 				}
 			} catch(SQLException e) {
 				e.printStackTrace();
@@ -144,9 +142,9 @@ public class DeadlineDaoMySql implements DeadlineDao {
 		openConnection();
 		deadlineIds.forEach(deadlineId -> {
 			try {
-				statement.execute("DELETE FROM deadline WHERE deadline_id = " + deadlineId + ";");
 				statement.execute("DELETE FROM deadline_message WHERE deadline_id = " + deadlineId + ";");
 				statement.execute("DELETE FROM deadline_date WHERE deadline_id = " + deadlineId + ";");
+				statement.execute("DELETE FROM deadline WHERE deadline_id = " + deadlineId + ";");
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
@@ -168,8 +166,8 @@ public class DeadlineDaoMySql implements DeadlineDao {
 				statement.execute(String.format(
 						"UPDATE deadline SET date_of_deadline = '%s', description_sn = '%s', community_name_sn = '%s'"
 								+ " WHERE deadline_id = %d;",
-						new Date(deadline.getDate().getTime()).toString(), deadline.getDescription(),
-						deadline.getCommunityName(), deadline.getId()));
+						new java.sql.Date(deadline.getDate().getTime()) + " " + new Time(deadline.getDate().getTime()),
+						deadline.getDescription(), deadline.getCommunityName(), deadline.getId()));
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
@@ -209,7 +207,7 @@ public class DeadlineDaoMySql implements DeadlineDao {
 						"SELECT * FROM deadline WHERE deadline_id = " + deadlineId + ";");
 				deadlineSet.next();
 				
-				Date date = deadlineSet.getDate("date_of_deadline");
+				Time time = deadlineSet.getTime("date_of_deadline");
 				String description = deadlineSet.getString("description_sn");
 				String communityName = deadlineSet.getString("community_name_sn");
 				
@@ -226,7 +224,7 @@ public class DeadlineDaoMySql implements DeadlineDao {
 					} while (messageIdSet.next());
 					
 				}
-				deadlines.add(new Deadline(deadlineId, date, description, communityName, chatId, messageIds));
+				deadlines.add(new Deadline(deadlineId, new Date(time.getTime()), description, communityName, chatId, messageIds));
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
@@ -299,4 +297,29 @@ public class DeadlineDaoMySql implements DeadlineDao {
 		closeConnection();
 		return false;
 	}
+	
+	public void insertDeadlineDates(long userId, long deadlineId, Set<Date> dates) {
+		openConnection();
+		dates.forEach(date -> {
+			try {
+				ResultSet deadlineDateSet = statement.executeQuery(String.format(
+						"SELECT * FROM deadline_date WHERE user_id = %d AND deadline_id = %d AND date = '%s';",
+						userId, deadlineId, new java.sql.Date(date.getTime()) + " " + new Time(date.getTime())));
+				if(!deadlineDateSet.next()) {
+					statement.execute(String.format(
+							"INSERT INTO deadline_date (user_id, deadline_id, date) VALUES (%d, %d, '%s')", userId,
+							deadlineId, new java.sql.Date(date.getTime()) + " " + new Time(date.getTime())));
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		});
+		closeConnection();
+	}
+	
+	public void insertDeadlineDates(String communityName, long deadlineId, Set<Date> dates) {
+		Community community = DaoContainer.communityDao.select(communityName);
+		community.getMemberIds().forEach(memberId -> insertDeadlineDates(memberId, deadlineId, dates));
+	}
+	
 }

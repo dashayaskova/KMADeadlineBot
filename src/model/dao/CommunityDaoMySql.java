@@ -6,6 +6,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -124,6 +125,7 @@ public class CommunityDaoMySql implements CommunityDao {
 					.forEach(memberId -> {
 						try {
 							statement.execute("DELETE FROM user_community WHERE user_id = " + memberId + ";");
+						
 						} catch (SQLException e) {
 							e.printStackTrace();
 						}
@@ -230,6 +232,32 @@ public class CommunityDaoMySql implements CommunityDao {
 		}
 		closeConnection();
 		return select(communityNames);
+	}
+
+	@Override
+	public Community create(String communityName, Set<Long> memberIds, Set<Long> adminIds) {
+		openConnection();
+		try {
+			statement.execute(
+					String.format("INSERT INTO community (community_name_sn, date_created_dt) VALUES ('%s', '%s');",
+							communityName, java.sql.Date.valueOf(LocalDate.now())));
+
+			for (long memberId : memberIds) {
+				statement.execute(
+						String.format("INSERT INTO user_community (user_id, community_name_sn) VALUES (%d, '%s');",
+								memberId, communityName));
+			}
+
+			for (long adminId : adminIds) {
+				statement.execute(
+						String.format("INSERT INTO admin_community (user_id, community_name_sn) VALUES (%d, '%s');",
+								adminId, communityName));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		closeConnection();
+		return new Community(communityName, memberIds, adminIds);
 	}
 
 }

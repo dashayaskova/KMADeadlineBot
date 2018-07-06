@@ -1,12 +1,13 @@
 package model.dao;
 
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Time;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -75,23 +76,23 @@ public class UserDaoMySql implements UserDao {
 	}
 	
 	
-	public static void main(String[] args) {
-		Set<User> users = DaoContainer.userDao.select();
-		System.out.println(users);
-		
-		System.out.println("insert #228 #229");
-		User user1 = new User(228l);
-		User user2 = new User(229l);
-		Set<User> newUsers = Stream.of(user1, user2).collect(Collectors.toSet());
-		DaoContainer.userDao.insert(newUsers);
-		
-		users = DaoContainer.userDao.select();
-		System.out.println(users);
-		
-		boolean contains = DaoContainer.userDao.contains(312);
-		System.out.println(contains);
-		
-	}
+	//	public static void main(String[] args) {
+	//		Set<User> users = DaoContainer.userDao.select();
+	//		System.out.println(users);
+	//		
+	//		System.out.println("insert #228 #229");
+	//		User user1 = new User(228l);
+	//		User user2 = new User(229l);
+	//		Set<User> newUsers = Stream.of(user1, user2).collect(Collectors.toSet());
+	//		DaoContainer.userDao.insert(newUsers);
+	//		
+	//		users = DaoContainer.userDao.select();
+	//		System.out.println(users);
+	//		
+	//		boolean contains = DaoContainer.userDao.contains(312);
+	//		System.out.println(contains);
+	//		
+	//	}
 	
 	@Override
 	public void insert(User user) {
@@ -104,26 +105,21 @@ public class UserDaoMySql implements UserDao {
 		openConnection();
 		users.forEach(user -> {
 			try {
-				//openConnection();
 				ResultSet userSet = statement.executeQuery("SELECT * FROM user WHERE user_id = " + user.getId() + ";");
-				if(userSet.next()) {
+				if (userSet.next()) {
 					closeConnection();
 					delete(user.getId());
 					openConnection();
 				}
-				//closeConnection();
-				
-				//openConnection();
+
 				statement.execute("INSERT INTO user (user_id) VALUES (" + user.getId() + ");");
-				//closeConnection();
-				
-				for(long deadlineId : user.getDeadlineIdDates().keySet()) {
-					for(Date date : user.getDeadlineIdDates().get(deadlineId)) {
-						//openConnection();
+
+				for (long deadlineId : user.getDeadlineIdDates().keySet()) {
+					for (Date date : user.getDeadlineIdDates().get(deadlineId)) {
 						statement.execute(String.format(
 								"INSERT INTO deadline_date (user_id, deadline_id, date) VALUES (%d, %d, '%s');",
-								user.getId(), deadlineId, date));
-						//closeConnection();
+								user.getId(), deadlineId,
+								new java.sql.Date(date.getTime()) + " " + new Time(date.getTime())));
 					}
 				}
 			} catch (SQLException e) {
@@ -163,7 +159,7 @@ public class UserDaoMySql implements UserDao {
 											"SELECT date FROM deadline_date WHERE user_id = %d AND deadline_id = %d;",
 											userId, deadlineId));
 									while (datesSet.next()) {
-										dates.add(datesSet.getDate("date"));
+										dates.add(new Date(datesSet.getTime("date").getTime()));
 									}
 								} catch (SQLException e) {
 									e.printStackTrace();
