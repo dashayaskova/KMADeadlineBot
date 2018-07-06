@@ -11,93 +11,70 @@ public class Community implements Comparable<Community> {
 	/** this value is unique and it is used as a primary key in the database */
 	private String name;
 
-	private Set<User> members;
-	private Set<User> admins;
-	
-	private final User creator;
-	
-	private Set<Deadline> deadlines;
+	private Set<Long> memberIds;
+	private Set<Long> adminIds;
 
 	/** creates new community with empty set of members and admins */
-	public Community(String name, User creator) {
-		this(name, creator, new HashSet<>(), new HashSet<>());
+	public Community(String name) {
+		this(name, new HashSet<>(), new HashSet<>());
 	}
 
 	/** main constructor with all arguments */
-	public Community(String name, User creator, Set<User> members, Set<User> admins) {
+	public Community(String name, Set<Long> memberIds, Set<Long> adminIds) {
 		this.name = name;
-		this.creator = creator;
-		this.members = members;
-		this.admins = admins;
-		admins.add(creator); // creator is an admin too
+		this.memberIds = memberIds;
+		this.adminIds = adminIds;
 	}
 
 	// getters and setters
 
 	public String getName() { return name; }
-	
-	public User getCreator() { return creator; }
-	
-	public Set<Deadline> getDeadlines() { return deadlines; }
-
-	public Set<Long> getDeadlineIds() {
-		// create Set<Long> from Set<Deadline> and change every
-		// deadline to deadline.getId
-		return deadlines.stream().map(Deadline::getId).collect(Collectors.toSet());
-	}
-
-	public Set<User> getMembers() {
-		Set<User> result = new HashSet<>();
-		result.addAll(members);
-		return result;
-	}
-
-	public Set<User> getAdmins() {
-		Set<User> result = new HashSet<>();
-		result.addAll(admins);
-		return result;
-	}
 
 	public Set<Long> getMemberIds() {
-		return members.stream().map(User::getId).collect(Collectors.toSet());
+		return memberIds.stream().collect(Collectors.toSet());
 	}
 
 	public Set<Long> getAdminIds() {
-		return admins.stream().map(User::getId).collect(Collectors.toSet());
+		return adminIds;
 	}
 
-	public void setMembers(Set<User> members) {
-		this.members = new HashSet<>();
-		this.members.addAll(members);
+	public void setMemberIds(Set<Long> memberIds) {
+		this.memberIds = memberIds.stream().collect(Collectors.toSet());
 	}
-
-	public void setAdmins(Set<User> admins) {
-		this.admins.clear();
-		this.admins.addAll(admins);
+	
+	public void setAdminIds(Set<Long> adminIds) {
+		this.adminIds = adminIds.stream().collect(Collectors.toSet());
 	}
 
 	// methods
 
-	public void addMember(User member) {
-		members.add(member);
+	public void addMemberId(long memberId) {
+		memberIds.add(memberId);
 	}
 
-	public void removeMember(User member) {
-		this.members.remove(member);
+	public void removeMemberId(long memberId) {
+		memberIds.remove(memberId);
 	}
 
-	public void addAdmin(User admin) {
-		admins.add(admin);
+	public void addAdmin(long adminId) {
+		adminIds.add(adminId);
 	}
 	
-	public void addAdmins(Set<User> admins) {
-		this.admins.addAll(admins);
+	public void addAdmins(Set<Long> adminIds) {
+		adminIds.forEach(this::addAdmin);
 	}
 	
-	public void removeAdmin(User admin) {
-		admins.remove(admin);
+	public void removeAdminId(long adminId) {
+		adminIds.remove(adminId);
 	}
 	
+	public boolean isMember(long userId) {
+		return memberIds.contains(userId);
+	}
+	
+	public boolean isAdmin(long userId) {
+		return adminIds.contains(userId);
+	}
 
 	/** compare communities by name*/
 	@Override
@@ -127,6 +104,6 @@ public class Community implements Comparable<Community> {
 	
 	@Override
 	public String toString() { // TODO rewrite
-		return name + "\n" + members + "\n" + admins + "\n" + creator + "\n";
+		return "community '" + name + "'\nmemberIds: " + memberIds + "\nadminIds: " + adminIds;
 	}
 }
