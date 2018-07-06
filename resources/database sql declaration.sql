@@ -21,6 +21,7 @@ CREATE TABLE community(
 CREATE TABLE deadline(
     deadline_id BIGINT NOT NULL AUTO_INCREMENT,
     date_of_deadline DATETIME NOT NULL,
+    description_sn CHAR(255) NOT NULL,
     community_name_sn CHAR(255) NOT NULL,
     PRIMARY KEY(deadline_id),
     FOREIGN KEY(community_name_sn) REFERENCES community(community_name_sn)
