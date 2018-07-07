@@ -7,7 +7,10 @@ import model.Community;
 public interface CommunityDao {
 	
 	Community create(String communityName, Set<Long> memberIds, Set<Long> adminIds);
+	
 	Set<Community> select();
+	Set<String> selectNames();
+	
 	Community select(String communityName);
 	Set<Community> select(Set<String> communityName);
 	
@@ -21,5 +24,4 @@ public interface CommunityDao {
 	
 	Set<Community> selectByAdminId(long adminId);
 	Set<Community> selectByMemberId(long memberId);
-	
 }
