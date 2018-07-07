@@ -16,7 +16,7 @@ import model.Community;
 
 public class CommunityDaoMySql implements CommunityDao {
 	
-	private static final String URL = "jdbc:mysql://localhost:3306/kmadeadlinebot";
+	private static final String URL = "jdbc:mysql://localhost:3306/kmadeadlinebot?useSSL=true";
 	private static final String USERNAME = "root";
 	private static final String PASSWORD = "root";
 
@@ -193,13 +193,14 @@ public class CommunityDaoMySql implements CommunityDao {
 	/** delete all communityNames from community, admin_community and user_community */
 	@Override
 	public void delete(Set<String> communityNames) {
-		
 		openConnection();
 		communityNames.forEach(communityName -> {
 			try {
 				statement.execute("DELETE FROM user_community WHERE community_name_sn = '" + communityName + "';");
 				statement.execute("DELETE FROM admin_community WHERE community_name_sn = '" + communityName + "';");
+				statement.execute("DELETE FROM deadline WHERE community_name_sn = '" + communityName + "';");	
 				statement.execute("DELETE FROM community WHERE community_name_sn = '" + communityName + "';");	
+				
 			} catch (SQLException e) { e.printStackTrace(); }
 		});
 		closeConnection();

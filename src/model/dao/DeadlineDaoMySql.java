@@ -23,7 +23,7 @@ import model.Deadline;
 
 public class DeadlineDaoMySql implements DeadlineDao {
 
-	private static final String URL = "jdbc:mysql://localhost:3306/kmadeadlinebot";
+	private static final String URL = "jdbc:mysql://localhost:3306/kmadeadlinebot?useSSL=true";
 	private static final String USERNAME = "root";
 	private static final String PASSWORD = "root";
 

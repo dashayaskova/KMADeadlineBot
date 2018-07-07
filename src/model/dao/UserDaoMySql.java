@@ -19,7 +19,7 @@ import model.User;
 
 public class UserDaoMySql implements UserDao {
 	
-	private static final String URL = "jdbc:mysql://localhost:3306/kmadeadlinebot";
+	private static final String URL = "jdbc:mysql://localhost:3306/kmadeadlinebot?useSSL=true";
 	private static final String USERNAME = "root";
 	private static final String PASSWORD = "root";
 
@@ -232,8 +232,10 @@ public class UserDaoMySql implements UserDao {
 		openConnection();
 		userIds.forEach(userId -> {
 			try {
-				statement.execute("DELETE FROM user WHERE user_id = " + userId + ";");
+				statement.execute("DELETE FROM admin_community WHERE user_id = " + userId + ";");
 				statement.execute("DELETE FROM deadline_date WHERE user_id = " + userId + ";");
+				statement.execute("DELETE FROM user_community WHERE user_id = " + userId + ";");
+				statement.execute("DELETE FROM user WHERE user_id = " + userId + ";");
 			} catch (SQLException e) { e.printStackTrace(); }
 		});
 		closeConnection();
