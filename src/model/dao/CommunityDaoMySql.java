@@ -9,6 +9,7 @@ import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.mysql.fabric.jdbc.FabricMySQLDriver;
 
@@ -259,6 +260,20 @@ public class CommunityDaoMySql implements CommunityDao {
 		
 		// get communities by community names
 		return select(communityNames);
+	}
+	
+	@Override
+	public Set<String> selectNamesByMemberId(long memberId) { // TODO change implementation
+		return selectByMemberId(memberId).stream()
+				.map(Community::getName)
+				.collect(Collectors.toSet());
+	}
+	
+	@Override
+	public Set<String> selectNamesByAdminId(long adminId) { // TODO change implementation
+		return selectByAdminId(adminId).stream()
+				.map(Community::getName)
+				.collect(Collectors.toSet());
 	}
 
 	/** create new community and add it to database */

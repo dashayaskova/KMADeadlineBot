@@ -24,4 +24,8 @@ public interface CommunityDao {
 	
 	Set<Community> selectByAdminId(long adminId);
 	Set<Community> selectByMemberId(long memberId);
+	
+	Set<String> selectNamesByMemberId(long memberId);
+	Set<String> selectNamesByAdminId(long adminId);
+	
 }
