@@ -1,33 +1,55 @@
 package telegram.session.api;
 
 import org.telegram.telegrambots.api.objects.Update;
+import org.telegram.telegrambots.exceptions.TelegramApiException;
+
+import telegram.bot.KMADeadlineBot;
 
 public abstract class Session {
 
 	// unique value
 	public final long userId;
 	
-	// you can check how many times this session was executed
-	// there is no auto increment of this value
-	public int pointer = 0;
+	// bot
+	// use to send messages
+	public final KMADeadlineBot bot;
+	
+	//	// you can check how many times this session was executed
+	//	// there is no auto increment of this value
+	//	public int pointer = 0;
 
 	// constructor
-	public Session(long userId) {
+	public Session(KMADeadlineBot bot, long userId) {
 		this.userId = userId;
+		this.bot = bot;
 	}
 
-	public abstract void updateListener(Update update);
+	// you shouldn't catch telegram exceptions,
+	// if they will be thrown method errorListener will catch them
+	// returns next session
+	public abstract Session updateListener(Update update) throws TelegramApiException ;
 
 	// default implementation where errorListener ignore errors
-	public void errorListener(Update update) {
+	// returns next session
+	public Session errorListener(Update update) {
 		// if you need the error listener - implement this method
+		return null;
 	}
 
-	public final void execute(Update update) {
+	public final void process(Update update) {
+		Session nextSession;
 		try {
-			updateListener(update);
+			nextSession = updateListener(update);
 		} catch (Exception exception) {
-			errorListener(update);
+			nextSession = errorListener(update);
+		}
+		
+		// if has next session, add it to SessionContainer
+		if(nextSession != null) {
+			bot.sessionContainer.add(nextSession);
+		} else {
+		// if doesn't have, remove this session from SessoinContainer
+			bot.sessionContainer.remove(userId);
 		}
 	}
 
@@ -47,5 +69,24 @@ public abstract class Session {
 	@Override
 	public int hashCode() {
 		return String.valueOf(userId).hashCode();
+	}
+	
+	// create Session without extending Session class, but using lambda expressions
+	public static interface UpdateListener { Session updateListener(Update update) throws TelegramApiException; }
+	public static interface ErrorListener { Session errorListener(Update update); }
+	
+	public static Session create(KMADeadlineBot bot, long userId, UpdateListener updateListener) {
+		return create(bot, userId, updateListener, (update) -> null);
+	}
+	
+	public static Session create(KMADeadlineBot bot, long userId, UpdateListener updateListener, ErrorListener errorListener) {
+		return new Session(bot, userId) {
+			public Session updateListener(Update update) throws TelegramApiException{
+				return updateListener.updateListener(update);
+			}
+			public Session errorListener(Update update) {
+				return errorListener.errorListener(update);
+			}
+		};
 	}
 }

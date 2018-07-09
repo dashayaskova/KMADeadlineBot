@@ -1,6 +1,7 @@
 package model;
 
 import java.time.Duration;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -14,21 +15,24 @@ public class Deadline implements Comparable<Deadline>{
 	private String description;
 	private long chatId;
 	private Set<Long> messageIds;
+	
+	private String communityName;
 
 	// constructors
 
 	/** main constructor with all arguments */
-	public Deadline(long id, Date date, String description, long chatId, Set<Long> messageIds) {
+	public Deadline(long id, Date date, String description, String communityName, long chatId, Set<Long> messageIds) {
 		this.id = id;
 		this.date = date;
 		this.description = description;
+		this.communityName = communityName;
 		this.chatId = chatId;
 		this.messageIds = messageIds;
 	}
 
 	/** creates Deadline instance with empty description */
-	public Deadline(long id, Date date, long chatId, Set<Long> messageIds) {
-		this(id, date, "", chatId, messageIds);
+	public Deadline(long id, Date date, String communityName, long chatId, Set<Long> messageIds) {
+		this(id, date, "", communityName, chatId, messageIds);
 	}
 
 	// getters and setters
@@ -68,8 +72,8 @@ public class Deadline implements Comparable<Deadline>{
 		return Duration.ofHours(0); // TODO implement
 	}
 
-	public Community getCommunity() {
-		return new Community("", new User(0)); // TODO implement
+	public String getCommunityName() {
+		return communityName; 
 	}
 
 	// methods from class Object
@@ -90,11 +94,14 @@ public class Deadline implements Comparable<Deadline>{
 
 	@Override
 	public String toString() {
-		return id + ": " + description;
+		return "deadline #" + id + ", description: \"" + description + "\"";
 	}
 
 	@Override
 	public int compareTo(Deadline deadline) {
-		return date.compareTo(deadline.date);
+		return Comparator.comparing(Deadline::getDate)
+				.thenComparing(Deadline::getCommunityName)
+				.thenComparing(Deadline::getDescription)
+				.compare(this, deadline);
 	}
 }
