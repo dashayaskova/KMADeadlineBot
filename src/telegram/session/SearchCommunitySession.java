@@ -52,7 +52,7 @@ public class SearchCommunitySession extends Session {
 				return this;
 				
 			} else {
-				return new CommunityOptionsSession(bot, userId, communityName);
+				return new JoinCommunitySession(bot, userId, communityName);
 			}
 		}
 		

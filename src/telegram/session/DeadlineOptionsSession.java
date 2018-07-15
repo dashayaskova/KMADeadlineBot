@@ -25,16 +25,16 @@ public class DeadlineOptionsSession extends Session {
 	}
 	
 	private void sendDeadlineInfo() {
-		String text = "--- дедлайн ---\n\n"
-				+ "назва спільноти: " + deadline.getCommunityName() + "\n\n"
-				+ "опис дедлайну:\n"
+		String text = "--- Deadlines ---\n\n"
+				+ "Community name: " + deadline.getCommunityName() + "\n\n"
+				+ "Deadline description:\n"
 				+ deadline.getDescription() + "\n\n"
-				+ "дата дедлайну: " + new SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(deadline.getDate()) + "\n\n"
+				+ "Date of deadline: " + new SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(deadline.getDate()) + "\n\n"
 				+ (community.isMember(userId) ? ("/notifications\n") : "")
 				+ (community.isAdmin(userId) ? ("/edit - редагувати дедлайн\n"
-						+ "/delete - видалити дедлайн\n") : "")
-				+ "/community - спільнота, для якої призначено дедлайн\n"
-				+ "\n/home - додому";
+						+ "/delete - delete deadline\n") : "")
+				+ "/community - \n"
+				+ "\n/home";
 		bot.sendText(userId, text);
 		
 		for(long messageId : deadline.getMessageIds().stream().sorted().collect(Collectors.toList())) {
@@ -57,22 +57,22 @@ public class DeadlineOptionsSession extends Session {
 			} else if(community.isAdmin(userId) && text.equals("/edit")) {
 				return null;//new EditDeadlineSession(bot, userid, deadline);
 			} else if(community.isAdmin(userId) && text.equals("/delete")) {
-				bot.sendText(userId, "видалити ? (/yes | /no)");
+				bot.sendText(userId, "Delete ? (/yes | /no)");
 				return new Session(bot, userId) {
 					public Session updateListener(Update confirmUpdate) {
 						if(confirmUpdate.hasMessage() && confirmUpdate.getMessage().hasText()) {
 							String text = confirmUpdate.getMessage().getText();
 							if(text.equalsIgnoreCase("/yes")) {
 								bot.deadlineDao.delete(deadline.getId());
-								bot.sendText(userId, "дедлайн успішно видалено");
+								bot.sendText(userId, "Dlete completed");
 								return new DeadlineOptionsSession(bot, userId, deadline);
 							} else if(text.equalsIgnoreCase("/no")) {
-								bot.sendText(userId, "видалення відмінено");
+								bot.sendText(userId, "Delete denied");
 								return new DeadlineOptionsSession(bot, userId, deadline);
 							}
 						}
 						
-						bot.sendText(userId, "видалити ? (/yes | /no)");
+						bot.sendText(userId, "Delete ? (/yes | /no)");
 						return this;
 					}
 				};

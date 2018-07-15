@@ -19,7 +19,9 @@ public class CreateDeadlineSession extends Session {
 
 	public CreateDeadlineSession(KMADeadlineBot bot, long userId) {
 		super(bot, userId);
-		askCommunityName();
+		//askCommunityName();
+		bot.sendText(userId, "lol, it works");
+		
 	}
 
 	private boolean isAdmin = true;

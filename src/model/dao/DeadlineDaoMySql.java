@@ -25,7 +25,7 @@ public class DeadlineDaoMySql implements DeadlineDao {
 
 	private static final String URL = "jdbc:mysql://localhost:3306/kmadeadlinebot?useSSL=true";
 	private static final String USERNAME = "root";
-	private static final String PASSWORD = "root";
+	private static final String PASSWORD = "1999";
 
 	private Connection connection;
 	private Statement statement;

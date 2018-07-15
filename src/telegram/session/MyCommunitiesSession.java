@@ -20,12 +20,12 @@ public class MyCommunitiesSession extends Session {
 	}
 	
 	public void sendMyCommunities() {
-		String text = "--- мої спільноти ---\n"
+		String text = "--- My communities ---\n"
 				+ communityNames.stream().sorted().collect(Collectors.joining("\n-", "\n-", "\n\n"))
-				+ "щоб обрати спільноту напиши її назву:\n\n/home";
+				+ "to choose community, write its name:\n\n/home";
 		
 		if(communityNames.size() == 0) {
-			text = "--- мої спільноти ---\n\nсписок спільнот порожній\n\n/home";
+			text = "--- My communities ---\n\nthe list is empty\n\n/home";
 		}
 		bot.sendText(userId, text);
 	}

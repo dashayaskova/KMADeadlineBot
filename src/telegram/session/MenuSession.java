@@ -10,11 +10,11 @@ import telegram.session.api.Session;
 public class MenuSession extends Session {
 	
 	public static final String MENU_TEXT = "--- @KMADeadlineBot ---\n\n"
-			+ "- /create_community - створити нову спільноту\n"
-			+ "- /search_community - шукати спільноту\n"
-			+ "- /my_communities - мої спільноти\n"
-			+ "- /my_deadlines - мої дедлайни\n"
-			+ "- /create_deadline - створити новий дедлайн";
+			+ "- /create_community\n"
+			+ "- /search_community\n"
+			+ "- /my_communities\n"
+			+ "- /my_deadlines\n"
+			+ "- /create_deadline";
 	
 	public MenuSession(KMADeadlineBot bot, long userId) {
 		super(bot, userId);
