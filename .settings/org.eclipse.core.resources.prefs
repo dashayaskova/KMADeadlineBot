@@ -1,0 +1,9 @@
+eclipse.preferences.version=1
+encoding//src/telegram/session/CommunityDeadlinesSession.java=UTF-8
+encoding//src/telegram/session/CommunityOptionsSession.java=UTF-8
+encoding//src/telegram/session/CreateCommunitySession.java=UTF-8
+encoding//src/telegram/session/CreateDeadlineSession.java=UTF-8
+encoding//src/telegram/session/DeadlineOptionsSession.java=UTF-8
+encoding//src/telegram/session/EditDeadlineSession.java=UTF-8
+encoding//src/telegram/session/EditMemberListSession.java=UTF-8
+encoding//src/telegram/session/MyCommunitiesSession.java=UTF-8
