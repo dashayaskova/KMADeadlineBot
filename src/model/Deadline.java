@@ -3,6 +3,7 @@ package model;
 import java.time.Duration;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -64,6 +65,15 @@ public class Deadline implements Comparable<Deadline>{
 	
 	public void setDate(Date date) {
 		this.date = date;
+	}
+	
+	public void setMessageIds(Set<Long> messageIds) {
+		this.messageIds = new HashSet<>();
+		messageIds.forEach(this.messageIds::add);
+	}
+	
+	public void setChatId(long chatId) {
+		this.chatId = chatId;
 	}
 
 	// methods

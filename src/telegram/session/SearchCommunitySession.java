@@ -10,6 +10,8 @@ import org.telegram.telegrambots.exceptions.TelegramApiException;
 import telegram.bot.KMADeadlineBot;
 import telegram.session.api.Session;
 
+/** @author dSigma */
+
 public class SearchCommunitySession extends Session {
 	
 	private Set<String> communities;

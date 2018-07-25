@@ -1,6 +1,6 @@
 package telegram.session;
 
-import java.util.Set;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import org.telegram.telegrambots.api.objects.Update;
@@ -9,24 +9,37 @@ import org.telegram.telegrambots.exceptions.TelegramApiException;
 import telegram.bot.KMADeadlineBot;
 import telegram.session.api.Session;
 
+/** @author illyakurochkin */
+
 public class MyCommunitiesSession extends Session {
 	
-	private Set<String> communityNames;
+	private List<String> communityNames;
 
 	public MyCommunitiesSession(KMADeadlineBot bot, long userId) {
 		super(bot, userId);
-		communityNames = bot.communityDao.selectNamesByMemberId(userId);
+		communityNames = bot.communityDao.selectNamesByMemberId(userId).stream().sorted().collect(Collectors.toList());
 		sendMyCommunities();
 	}
 	
 	public void sendMyCommunities() {
-		String text = "--- My communities ---\n"
-				+ communityNames.stream().sorted().collect(Collectors.joining("\n-", "\n-", "\n\n"))
-				+ "to choose community, write its name:\n\n/home";
+		String text = "--- мої спільноти ---\n\n";
+				
 		
-		if(communityNames.size() == 0) {
-			text = "--- My communities ---\n\nthe list is empty\n\n/home";
+		
+		
+		if(communityNames.isEmpty()) {
+			text += "список спільнот порожній\n"
+					+ "/search_community - знайти спільноту\n"
+					+ "/create_community - створити нову спільноту\n\n";
+		} else {
+			
+			for(int i = 0; i < communityNames.size(); i++) {
+				text += "/" + (i + 1) + " " + communityNames.get(i) + "\n";
+			}
+			
 		}
+		
+		text += "/home - додому";
 		bot.sendText(userId, text);
 	}
 

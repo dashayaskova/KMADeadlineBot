@@ -1,11 +1,8 @@
 package telegram.session;
 
-import java.util.Set;
-
 import org.telegram.telegrambots.api.methods.groupadministration.GetChat;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.methods.updatingmessages.EditMessageText;
-import org.telegram.telegrambots.api.objects.Message;
 import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
 
@@ -14,33 +11,26 @@ import telegram.api.InlineKeyboardBuilder;
 import telegram.bot.KMADeadlineBot;
 import telegram.session.api.Session;
 
-public class ConfirmEditMemberListSession extends Session {
-	Community community;
-	int last;
-	String list;
+/** @author dSigma */
 
-	// TODO add check for callbackId
-	public ConfirmEditMemberListSession(KMADeadlineBot bot, long userId, Community community) {
+public class ConfirmEditMemberListSession  extends Session {
+
+	private Community community;
+	private long deletedId;
+	private long userId;
+
+	public ConfirmEditMemberListSession(KMADeadlineBot bot, long userId,long deletedId,Community community) {
 		super(bot, userId);
 		this.community = community;
-		StringBuffer text = new StringBuffer();
-		text.append("Member list:\n");
+		this.deletedId = deletedId;
+		this.userId = userId;
 
-		Set<Long> members = community.getMemberIds();
-		try {
-			for (long member : members) {
-				text.append(bot.execute(new GetChat(member)).getUserName() + "\n");
-			}
-		} catch (TelegramApiException e) {
-			e.printStackTrace();
-		}
-		list = text.toString();
-		text.append("\nAre you sure you want to apply chanes?");
+		String text = "Are u sure that u want to delete this person?";
 		SendMessage sm = InlineKeyboardBuilder.create(userId).addButton("Yes", "1").addButton("No", "0").nextRow()
 				.build();
 		sm.setText(text.toString());
 		try {
-			last = ((Message) bot.execute(sm)).getMessageId();
+			bot.execute(sm);
 		} catch (TelegramApiException e) {
 			e.printStackTrace();
 		}
@@ -48,25 +38,28 @@ public class ConfirmEditMemberListSession extends Session {
 
 	@Override
 	public Session updateListener(Update update) throws TelegramApiException {
-		if (update.hasCallbackQuery()) {
-			int t = new Integer(update.getCallbackQuery().getData());
-			switch (t) {
-			case 0:
-				//TODO
-				break;
-			case 1:
-				bot.communityDao.update(community);
-				EditMessageText et = new EditMessageText();
-
-				et.setChatId(userId);
-				et.setMessageId(last);
-				et.setText(list + "\nChanges applied");
-				bot.execute(et);
-
-				bot.sessionContainer.remove(userId);
-			}
-		}
-		return null;
+		if(update.hasCallbackQuery()) {
+		String text = update.getCallbackQuery().getData();
+		
+		EditMessageText editMessage = new EditMessageText(); 
+		editMessage.setChatId(String.valueOf(update.getCallbackQuery().getMessage().getChatId()));
+		editMessage.setMessageId(update.getCallbackQuery().getMessage().getMessageId()); 
+		String name = bot.execute(new GetChat(deletedId)).getUserName();
+		
+		
+		if(text.equals("1")) {
+			community.removeMemberId(deletedId);
+			bot.communityDao.update(community);
+			editMessage.setText("You removed "+name+" from the community "+community.getName());
+			bot.execute(editMessage);
+			
+		    return new CommunityOptionsSession(bot, userId, community.getName());
+		}else if(text.equals("0")) {
+			editMessage.setText("You didn't remove "+name+" from the community "+community.getName());
+			bot.execute(editMessage);
+			  return new CommunityOptionsSession(bot, userId, community.getName());
+		}}
+		return this;
 	}
 
 }

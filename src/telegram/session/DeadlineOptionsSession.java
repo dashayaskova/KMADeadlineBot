@@ -12,6 +12,8 @@ import model.Deadline;
 import telegram.bot.KMADeadlineBot;
 import telegram.session.api.Session;
 
+/** @author mike_mars */
+
 public class DeadlineOptionsSession extends Session {
 
 	private Deadline deadline;

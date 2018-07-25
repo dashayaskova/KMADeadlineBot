@@ -25,7 +25,7 @@ public class DeadlineDaoMySql implements DeadlineDao {
 
 	private static final String URL = "jdbc:mysql://localhost:3306/kmadeadlinebot?useSSL=true";
 	private static final String USERNAME = "root";
-	private static final String PASSWORD = "1999";
+	private static final String PASSWORD = "root";
 
 	private Connection connection;
 	private Statement statement;
@@ -281,7 +281,7 @@ public class DeadlineDaoMySql implements DeadlineDao {
 		openConnection();
 		try {
 			ResultSet deadlineIdSet = statement.executeQuery(
-				"SELECT deadline_id FROM deadline WHERE community_name_sn = " + communityName + ";");
+				"SELECT deadline_id FROM deadline WHERE community_name_sn = '" + communityName + "';");
 			while(deadlineIdSet.next()) {
 				deadlineIds.add(deadlineIdSet.getLong("deadline_id"));
 			}

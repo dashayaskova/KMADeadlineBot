@@ -21,7 +21,7 @@ public class UserDaoMySql implements UserDao {
 	
 	private static final String URL = "jdbc:mysql://localhost:3306/kmadeadlinebot?useSSL=true";
 	private static final String USERNAME = "root";
-	private static final String PASSWORD = "1999";
+	private static final String PASSWORD = "root";
 
 	private Connection connection;
 	private Statement statement;

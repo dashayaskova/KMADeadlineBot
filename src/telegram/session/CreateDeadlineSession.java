@@ -15,12 +15,13 @@ import model.Deadline;
 import telegram.bot.KMADeadlineBot;
 import telegram.session.api.Session;
 
+/** @author dSigma */
+
 public class CreateDeadlineSession extends Session {
 
 	public CreateDeadlineSession(KMADeadlineBot bot, long userId) {
 		super(bot, userId);
-		//askCommunityName();
-		bot.sendText(userId, "lol, it works");
+		askCommunityName();
 		
 	}
 
@@ -102,24 +103,17 @@ public class CreateDeadlineSession extends Session {
 
 				// listen date
 			} else if (isAdmin && communityName != null && description != null && date == null) {
-				System.out.println("listen date");
 				try {
-					System.out.println("in try");
 					// date format
 					DateFormat parser = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
-					System.out.println("after parser");
 					Date inputDate = parser.parse(text);
-					System.out.println("after inputDate");
 
 					// if old date
 					if (inputDate.getTime() <= System.currentTimeMillis()) {
-						System.out.println("if true");
 						bot.sendText(userId, "не можливо створити дедлайн з датою, що вже минула");
 						
 					} else {
-						System.out.println("else");
 						this.date = inputDate;
-						System.out.println("before askOtherMessages()");
 						askOtherMessages();
 					}
 				} catch (Exception e) {
