@@ -120,7 +120,7 @@ public class UserDaoMySql implements UserDao {
 				}
 
 				// add user's id to 'user' table
-				statement.execute("INSERT INTO user (user_id) VALUES (" + user.getId() + ");");
+				statement.execute("INSERT INTO user (user_id) VALUES ('" + user.getId() + "');");
 
 				// add deadlines and dates to remind to 'deadline_date' table
 				for (long deadlineId : user.getDeadlineIdDates().keySet()) {
@@ -187,11 +187,13 @@ public class UserDaoMySql implements UserDao {
 					users.add(new User(userId, deadlineIdDates));
 				
 				// if database does't contain userId
+				//how we can add user to our database in this place, if the bot cannot write to users first
 				} else {
-					
-					User user = new User(userId);
+					/*
+					User user = new User(userId, "");
 					insert(user);
 					users.add(user);
+					*/
 				}
 			} catch (SQLException e) { e.printStackTrace(); }
 		});

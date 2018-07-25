@@ -281,7 +281,7 @@ public class DeadlineDaoMySql implements DeadlineDao {
 		openConnection();
 		try {
 			ResultSet deadlineIdSet = statement.executeQuery(
-				"SELECT deadline_id FROM deadline WHERE community_name_sn = " + communityName + ";");
+				"SELECT deadline_id FROM deadline WHERE community_name_sn = '" + communityName + "';");
 			while(deadlineIdSet.next()) {
 				deadlineIds.add(deadlineIdSet.getLong("deadline_id"));
 			}

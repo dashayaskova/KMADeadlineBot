@@ -28,8 +28,8 @@ public class KMADeadlineBot extends TelegramLongPollingBot {
 	public String getBotUsername() { return "KMADeadlineBot"; }
 
 	@Override
-	public String getBotToken() { return "474785816:AAGKFWo8RU2IFqg_uqmEGYPhy_W8QvnRDqo"; }
-	
+	public String getBotToken() { return "542673382:AAHr5h5FspSUMp7PtTc3LaTgs2D8yn7c91A"/*"546487698:AAH-BB8KRJoEsNbPNZQWMWAXlqn4E4dFI64"*/; }
+	//https://api.telegram.org/bot546487698:AAH-BB8KRJoEsNbPNZQWMWAXlqn4E4dFI64/editMessageText?chat_id=425956289&message_id=799&text=chang**ed**text
 	// dao
 	
 	public final UserDao userDao = new UserDaoMySql();
@@ -46,6 +46,7 @@ public class KMADeadlineBot extends TelegramLongPollingBot {
 	public void onUpdateReceived(Update update) {
 		long userId = getUserId(update);
 		
+		// check main commands
 		if(update.hasMessage() && update.getMessage().hasText()) {
 			String text = update.getMessage().getText().toLowerCase();
 
@@ -70,30 +71,32 @@ public class KMADeadlineBot extends TelegramLongPollingBot {
 			}
 		} 
 		
+		// check session container
 		if(sessionContainer.contains(userId)) {
-			
 			sessionContainer.get(userId).process(update);
-			
-		} else if (update.hasMessage() && update.getMessage().hasText()
-				&& update.getMessage().getText().equals("/start")) {
-			
+		}
+		
+		// register new user
+		if (update.hasMessage() && update.getMessage().hasText()
+				&& update.getMessage().getText().equals("/start") && !userDao.contains(userId)) {			
 			sendStartMessage(userId);
 			sessionContainer.add(new MenuSession(this, userId));
-			
 			userDao.insert(new User(userId));
 		}
 	}
 	
 	public void sendStartMessage(long userId) {
-		String text = "--- привіт, тебе вітає @KMADeadlineBot ---";
+		String text = "--- this is @KMADeadlineBot ---";
 		sendText(userId, text);
 	}
 
+	// send simple text message with parse mode
 	public void sendText(long receiverId, String message) {
 
-		SendMessage sendMessage = new SendMessage();
-		sendMessage.setChatId(receiverId);
-		sendMessage.setText(message);
+		SendMessage sendMessage = new SendMessage()
+				.setChatId(receiverId)
+				.setText(message)
+				.setParseMode("markdown");
 
 		try {
 			execute(sendMessage);

@@ -41,6 +41,7 @@ public abstract class Session {
 		try {
 			nextSession = updateListener(update);
 		} catch (Exception exception) {
+			exception.printStackTrace();
 			nextSession = errorListener(update);
 		}
 		
