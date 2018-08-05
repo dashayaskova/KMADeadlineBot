@@ -26,9 +26,9 @@ public class SearchCommunitySession extends Session {
 		String text = communities.stream()
 				.sorted()
 				.limit(100)
-				.map(name -> "-" + name)
+				.map(name -> "/_" + name)
 				.collect(Collectors.joining("\n"));
-		text += "\n...\n enter community name";
+		text += "\n\n tap on community, you want to choose.";
 		
 		SendMessage message = new SendMessage()
 				.setChatId(userId)
@@ -44,8 +44,8 @@ public class SearchCommunitySession extends Session {
 	@Override
 	public Session updateListener(Update update) throws TelegramApiException {
 		if(update.hasMessage() && update.getMessage().hasText()) {
-			String text = update.getMessage().getText().toLowerCase();
-			
+			String text = update.getMessage().getText().toLowerCase().substring(2);
+						
 			String communityName = communities.stream().filter(name -> name.toLowerCase().startsWith(text))
 					.sorted().findFirst().orElse(null);
 			
@@ -54,7 +54,8 @@ public class SearchCommunitySession extends Session {
 				return this;
 				
 			} else {
-				return new JoinCommunitySession(bot, userId, communityName);
+				return new CommunityOptionsSession(bot, userId, communityName);
+				
 			}
 		}
 		
