@@ -16,6 +16,7 @@ import model.Community;
 import telegram.api.InlineKeyboardBuilder;
 import telegram.bot.KMADeadlineBot;
 import telegram.session.api.Session;
+import test.ConfirmEditMemberListSession;
 
 /** @author dSigma */
 

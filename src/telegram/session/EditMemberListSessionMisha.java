@@ -108,7 +108,7 @@ public class EditMemberListSessionMisha extends Session {
 				return this;
 			} else if (update.getCallbackQuery().getData().equals("d")) {
 				bot.sessionContainer.remove(userId);
-				return new ConfirmEditMemberListSessionMisha(bot, userId, community, deleted);
+				return new ConfirmEditMemberListSession(bot, userId, community, deleted);
 			}
 		}
 
