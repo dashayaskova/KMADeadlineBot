@@ -25,19 +25,23 @@ import telegram.session.api.SessionContainer;
 public class KMADeadlineBot extends TelegramLongPollingBot {
 
 	@Override
-	public String getBotUsername() { return "KMADeadlineBot"; }
+	public String getBotUsername() {
+		return "KMADeadlineBot";
+	}
 
 	@Override
-	public String getBotToken() { return "542673382:AAHr5h5FspSUMp7PtTc3LaTgs2D8yn7c91A"/*"546487698:AAH-BB8KRJoEsNbPNZQWMWAXlqn4E4dFI64"*/; }
-	//https://api.telegram.org/bot546487698:AAH-BB8KRJoEsNbPNZQWMWAXlqn4E4dFI64/editMessageText?chat_id=425956289&message_id=799&text=chang**ed**text
+	public String getBotToken() {
+		return "546487698:AAH-BB8KRJoEsNbPNZQWMWAXlqn4E4dFI64"/* "546487698:AAH-BB8KRJoEsNbPNZQWMWAXlqn4E4dFI64" */;
+	}
+	// https://api.telegram.org/bot546487698:AAH-BB8KRJoEsNbPNZQWMWAXlqn4E4dFI64/editMessageText?chat_id=425956289&message_id=799&text=chang**ed**text
 	// dao
-	
+
 	public final UserDao userDao = new UserDaoMySql();
 	public final CommunityDao communityDao = new CommunityDaoMySql();
 	public final DeadlineDao deadlineDao = new DeadlineDaoMySql();
-	
+
 	// sessions
-	
+
 	public final SessionContainer sessionContainer = new SessionContainer();
 
 	// update listener
@@ -45,9 +49,8 @@ public class KMADeadlineBot extends TelegramLongPollingBot {
 	@Override
 	public void onUpdateReceived(Update update) {
 		long userId = getUserId(update);
-		
 		// check main commands
-		if(update.hasMessage() && update.getMessage().hasText()) {
+		if (update.hasMessage() && update.getMessage().hasText()) {
 			String text = update.getMessage().getText().toLowerCase();
 
 			if (text.equals("/create_community")) {
@@ -69,22 +72,25 @@ public class KMADeadlineBot extends TelegramLongPollingBot {
 				sessionContainer.add(new MenuSession(this, userId));
 				return;
 			}
-		} 
-		
+		}
+
 		// check session container
-		if(sessionContainer.contains(userId)) {
+		if (sessionContainer.contains(userId)) {
 			sessionContainer.get(userId).process(update);
 		}
-		
+
 		// register new user
-		if (update.hasMessage() && update.getMessage().hasText()
-				&& update.getMessage().getText().equals("/start") && !userDao.contains(userId)) {			
-			sendStartMessage(userId);
-			sessionContainer.add(new MenuSession(this, userId));
-			userDao.insert(new User(userId));
+		if (update.hasMessage() && update.getMessage().hasText() && update.getMessage().getText().equals("/start")) {
+			if (!userDao.contains(userId)) {
+				sendStartMessage(userId);
+				sessionContainer.add(new MenuSession(this, userId));
+				userDao.insert(new User(userId));
+			} else {
+				sessionContainer.add(new MenuSession(this, userId));
+			}
 		}
 	}
-	
+
 	public void sendStartMessage(long userId) {
 		String text = "--- this is @KMADeadlineBot ---";
 		sendText(userId, text);
@@ -93,11 +99,8 @@ public class KMADeadlineBot extends TelegramLongPollingBot {
 	// send simple text message with parse mode
 	public void sendText(long receiverId, String message) {
 
-		SendMessage sendMessage = new SendMessage()
-				.setChatId(receiverId)
-				.setText(message)
-				.setParseMode("markdown");
-
+		SendMessage sendMessage = new SendMessage().setChatId(receiverId).setText(message).setParseMode("markdown");
+		sendMessage.setParseMode("HTML");
 		try {
 			execute(sendMessage);
 		} catch (TelegramApiException exception) {
@@ -105,8 +108,8 @@ public class KMADeadlineBot extends TelegramLongPollingBot {
 		}
 	}
 
-	// static methods 
-	
+	// static methods
+
 	public static long getUserId(Update update) {
 		if (update.hasMessage()) {
 			// if this update contains message, get id from message
@@ -116,9 +119,8 @@ public class KMADeadlineBot extends TelegramLongPollingBot {
 			return update.getCallbackQuery().getFrom().getId();
 		}
 	}
-	
+
 	public static void main(String[] args) throws InterruptedException, TelegramApiException {
-		System.out.println(System.currentTimeMillis());
 		ApiContextInitializer.init();
 		TelegramBotsApi telegramBotsApi = new TelegramBotsApi();
 		telegramBotsApi.registerBot(new KMADeadlineBot());

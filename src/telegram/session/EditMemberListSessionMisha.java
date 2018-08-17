@@ -6,9 +6,9 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.telegram.telegrambots.api.methods.groupadministration.GetChat;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.methods.updatingmessages.EditMessageText;
-import org.telegram.telegrambots.api.objects.Message;
 import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
 
@@ -24,22 +24,27 @@ public class EditMemberListSessionMisha extends Session {
 	private Map<String, Long> map;
 	private int page = 0;
 	private int numOfMemInSes = 10;
-	private String chatId;
-	private Integer messageId;
 	private Set<Long> deleted = new HashSet<Long>();
 
 	public EditMemberListSessionMisha(KMADeadlineBot bot, long userId, String communityName) {
 		super(bot, userId);
 		this.community = bot.communityDao.select(communityName);
+		init();
+	}
+	
+	public EditMemberListSessionMisha(KMADeadlineBot bot, long userId, Community community) {
+		super(bot, userId);
+		this.community = community;
+		init();
+	}
+	
+	private void init() {
 		SendMessage sm = InlineKeyboardBuilder.create(userId).addButton("<-", "1").addButton("Del", "d").addButton("->", "0").nextRow()
 				.build();
 
 		sm.setText(sendListOfMembers(page).toString());
-		this.chatId = sm.getChatId();
-
 		try {
-			Message mes = bot.execute(sm);
-			this.messageId = mes.getMessageId();
+			bot.execute(sm);
 		} catch (TelegramApiException e) {
 			e.printStackTrace();
 		}
@@ -64,7 +69,7 @@ public class EditMemberListSessionMisha extends Session {
 		while (count < numOfMemInSes && iterator.hasNext()) {
 			try {
 				long ids = iterator.next();
-				String username = ids +"";/*bot.execute(new GetChat(ids)).getUserName();*/
+				String username = bot.execute(new GetChat(ids)).getUserName();
 				text += "\n/_" + username;
 				map.put(username, ids);
 			} catch (Exception e) {

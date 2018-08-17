@@ -5,8 +5,10 @@ import java.util.Set;
 import org.telegram.telegrambots.api.methods.groupadministration.GetChat;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.methods.updatingmessages.EditMessageText;
+import org.telegram.telegrambots.api.objects.CallbackQuery;
 import org.telegram.telegrambots.api.objects.Message;
 import org.telegram.telegrambots.api.objects.Update;
+import org.telegram.telegrambots.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
 
 import model.Community;
@@ -19,29 +21,43 @@ import telegram.session.api.Session;
 public class CommunityOptionsSession extends Session {
 
 	private Community community;
-	private Integer lastSent;
-
+	private StringBuffer info;
 	/**
 	 * @param bot
 	 * @param userId
 	 * @param communityName
 	 */
 	public CommunityOptionsSession(KMADeadlineBot bot, long userId, String communityName) {
-		super(bot, userId);
-		this.community = bot.communityDao.select(communityName);
-		init();
+		this(bot, userId, bot.communityDao.select(communityName));
 	}
 
 	public CommunityOptionsSession(KMADeadlineBot bot, long userId, Community community) {
 		super(bot, userId);
 		this.community = community;
-		init();
+		info = new StringBuffer("--- <b>" + community.getName().toUpperCase() + "</b> community ---\n");
+		if (community.isAdmin(userId)) {
+			info.append("<i>You are an adimn of this community</i>");
+		} else if (community.isMember(userId)) {
+			info.append("<i>You are a member of this community</i>");
+		} else {
+			info.append("<i>You are not a member of this community</i>");
+		}
+				
+		info.append("\n\nContinue searching: /search_community\nReturn home: /home\nTo manage this community choose one of the following:");
+		SendMessage sm = new SendMessage();
+		sm.setChatId(userId);
+		sm.setParseMode("HTML");
+		sm.setText(info.toString());
+		sm.setReplyMarkup(getKeyboard());
+		try {
+			bot.execute(sm);
+		} catch (TelegramApiException e) {
+			e.printStackTrace();
+		}		
 	}
 	
-	private void init() {
-		String text = "**" + community.getName() + "**\n" + "Choose one of the following:";
-
-		InlineKeyboardBuilder kb = InlineKeyboardBuilder.create(userId).setText(text);
+	private InlineKeyboardMarkup getKeyboard() {
+		InlineKeyboardBuilder kb = InlineKeyboardBuilder.create(userId);
 		if (community.isAdmin(userId)) {
 			kb.addButton("1. Create deadline", "11").addButton("2. View deadlines", "12").nextRow()
 					.addButton("3. Edit member list", "13").addButton("4. Edit admin list", "14")
@@ -55,107 +71,118 @@ public class CommunityOptionsSession extends Session {
 			.addButton("2. Show member list", "22").addButton("3. Show admin list", "23")
 			.nextRow().addButton("4. Join", "24").nextRow();
 		}
-		SendMessage sm = kb.build();
-		try {
-			lastSent = ((Message) bot.execute(sm)).getMessageId();
-		} catch (TelegramApiException e) {
-			e.printStackTrace();
-		}		
+		return kb.getReplyMarkup();
 	}
 	
 	@Override
 	public Session updateListener(Update update) throws TelegramApiException {
 		if (update.hasCallbackQuery()) {
+			CallbackQuery query = update.getCallbackQuery();
 			StringBuffer text = new StringBuffer();
+			
 			EditMessageText et = new EditMessageText();
+			text.append(info + "\n\n");
 			et.setChatId(userId);
-			et.setMessageId(lastSent);
+			et.setMessageId(query.getMessage().getMessageId());
 			et.setParseMode("HTML");
-
-			int t = new Integer(update.getCallbackQuery().getData());
+			InlineKeyboardMarkup keyboard = getKeyboard();
+			
+			int t = new Integer(query.getData());
 			switch (t) {
 			case 11:
-				text.append("_creating deadline_");
+				text.append("<b>--->Creating deadline</b>");
 				break;
 			case 12:
-				text.append("_showing deadlines_");
+				text.append("<b>--->Showing deadlines</b>");
 				break;
 			case 13:
-				text.append("_Editing member list_");
+				text.append("<b>--->Editing member list</b>");
 				break;
 			case 14:
-				text.append("_Editing adim list_");
+				text.append("<b>--->Editing adim list</b>");
 				break;
 			case 15:
-				text.append("_You are no longer a member of the community_");
+				text.append("<b>--->You are no longer a member of the community</b>");
 				break;
 			case 16:
-				text.append("_deleteing group_");
+				text.append("<b>--->Deleteing group</b>");
 				break;
 			case 21:
-				text.append("_Show deadlines_");
+				text.append("<b>--->Show deadlines</b>");
 				break;
 			case 22:
-				text.append("<i>Member list:</i>");
+				text.append("<b>--->Member list:</b>");
 				Set<Long> member_ids = community.getMemberIds();
 				
 				if(member_ids.isEmpty()) {
 					text.append("\nThis list is empty");
-					break;
+				} else {
+					for(long id : member_ids) {
+						text.append("\n@"+bot.execute(new GetChat(id)).getUserName());
+					}
 				}
-				for(long id : member_ids) {
-					text.append("\n@"+bot.execute(new GetChat(id)).getUserName());
-				}
+				et.setReplyMarkup(keyboard);
 				break;
 			case 23:
-				text.append("<i>Admin list:</i>");
+				text.append("<b>--->Admin list:</b>");
 				Set<Long> admin_ids = community.getAdminIds();
 				if(admin_ids.isEmpty()) {
 					text.append("\nThis list is empty");
-					break;
+				} else {
+					for(long id : admin_ids) {
+						text.append("\n@"+bot.execute(new GetChat(id)).getUserName());
+					}
 				}
-				for(long id : admin_ids) {
-					text.append("\n@"+bot.execute(new GetChat(id)).getUserName());
-				}
+				et.setReplyMarkup(keyboard);
 				break;
 			case 24:
-				text.append("_You are the member of community now_");
+				text.append("---><b>You are the member of community now</b>");
 				community.addMemberId(userId);
 				bot.communityDao.update(community);
+				et.setReplyMarkup(getKeyboard());
 			}
 			
 			et.setText(text.toString());
 			bot.execute(et);
-			bot.sessionContainer.remove(userId);
 			
 			switch (t) {
 			case 11:
-				// TODO bot.sessionContainer.add(new CreateDeadlineSession(bot, userId));
-				break;
+				//TODO constructor
+				return new CreateDeadlineSession(bot, userId);
 			case 12:
-				// TODO
-				break;
+				return new CommunityDeadlinesSession(bot, userId, community);
 			case 13:
-				return new EditMemberListSessionMisha(bot, userId, community.getName());
+				return new EditMemberListSessionMisha(bot, userId, community);
 			case 14:
-				// TODO
-				break;
+				bot.sendText(userId, "If you want to remove someone from admin list click /remove_admins ,\nif you want to make another person an admin click /promote_admins");
+				return new Session(bot, userId) {
+					@Override
+					public Session updateListener(Update update) throws TelegramApiException {
+						if(update.hasMessage()) {
+							if(update.getMessage().getText().equals("/remove_admins")) return new EditAdminListSession(bot, userId, community);
+							if(update.getMessage().getText().equals("/promote_admins")) return new PromoteSession(bot, userId, community);
+						}
+						return new CommunityOptionsSession(bot, userId, community);
+					}
+				};
 			case 15:
+				community.removeMemberId(userId);
+				bot.communityDao.update(community);
+				bot.sendText(userId, "You left successfuly");
 				return new MenuSession(bot, userId);
 			case 16:
 				// TODO
 			case 21:
-				// TODO
-				break;
+				return new CommunityDeadlinesSession(bot, userId, community);
 			case 22:
-				return new CommunityOptionsSession(bot, userId, community);
+				return this;
 			case 23:
-				return new CommunityOptionsSession(bot, userId, community);
+				return this;
 			case 24:
-				return new CommunityOptionsSession(bot, userId, community);
+				return this;
 }
 		}
-		return null;
+		return this;
 	}
 
 }

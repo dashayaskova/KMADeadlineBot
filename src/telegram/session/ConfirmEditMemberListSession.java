@@ -24,23 +24,8 @@ public class ConfirmEditMemberListSession  extends Session {
 	public ConfirmEditMemberListSession(KMADeadlineBot bot, long userId, Community community, Set<Long> deleted) {
 		super(bot, userId);
 		this.community = community;
-		this.userId = userId;
 		this.deleted = deleted;
 		
-		init();
-		}
-	
-	public ConfirmEditMemberListSession(KMADeadlineBot bot, long userId, String communityName, Set<Long> deleted) {
-		super(bot, userId);
-		this.community = bot.communityDao.select(communityName);
-		this.userId = userId;
-		this.deleted = deleted;
-		
-		init();
-	}
-
-	
-	private void init() {
 		StringBuffer text = new StringBuffer();
 		text.append("Are u sure that u want to delete these people?");
 		for(long id : deleted) {
@@ -60,6 +45,10 @@ public class ConfirmEditMemberListSession  extends Session {
 		} catch (TelegramApiException e) {
 			e.printStackTrace();
 		}	
+		}
+	
+	public ConfirmEditMemberListSession(KMADeadlineBot bot, long userId, String communityName, Set<Long> deleted) {
+		this(bot, userId, bot.communityDao.select(communityName), deleted);
 	}
 	
 	@Override
