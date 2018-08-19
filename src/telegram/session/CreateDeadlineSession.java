@@ -24,6 +24,11 @@ public class CreateDeadlineSession extends Session {
 		askCommunityName();
 		
 	}
+	
+	public CreateDeadlineSession(KMADeadlineBot bot, long userId, String communityName) {
+		super(bot, userId);
+		this.communityName = communityName;
+	}
 
 	private boolean isAdmin = true;
 	private Set<Long> messageIds = new HashSet<>();

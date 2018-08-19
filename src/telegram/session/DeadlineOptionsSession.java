@@ -32,7 +32,7 @@ public class DeadlineOptionsSession extends Session {
 				+ "Deadline description:\n"
 				+ deadline.getDescription() + "\n\n"
 				+ "Date of deadline: " + new SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(deadline.getDate()) + "\n\n"
-				+ (community.isMember(userId) ? ("/notifications\n") : "")
+			//	+ (community.isMember(userId) ? ("/notifications\n") : "")
 				+ (community.isAdmin(userId) ? ("/edit - редагувати дедлайн\n"
 						+ "/delete - delete deadline\n") : "")
 				+ "/community - \n"
@@ -54,10 +54,10 @@ public class DeadlineOptionsSession extends Session {
 		if(update.hasMessage() && update.getMessage().hasText()) {
 			String text = update.getMessage().getText().toLowerCase();
 			
-			if(community.isMember(userId) && text.equals("/notifications")) {
+			/*if(community.isMember(userId) && text.equals("/notifications")) {
 				return null;//new EditNotificationsSession(bot, userId, deadline);
-			} else if(community.isAdmin(userId) && text.equals("/edit")) {
-				return null;//new EditDeadlineSession(bot, userid, deadline);
+			} else */if(community.isAdmin(userId) && text.equals("/edit")) {
+				return new EditDeadlineSession(bot, userId, deadline);
 			} else if(community.isAdmin(userId) && text.equals("/delete")) {
 				bot.sendText(userId, "Delete ? (/yes | /no)");
 				return new Session(bot, userId) {

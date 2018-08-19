@@ -16,7 +16,7 @@ import model.dao.UserDao;
 import model.dao.UserDaoMySql;
 import telegram.session.CreateCommunitySession;
 import telegram.session.CreateDeadlineSession;
-import telegram.session.MenuSession;
+import telegram.session.MyAdminSession;
 import telegram.session.MyCommunitiesSession;
 import telegram.session.MyDeadlinesSession;
 import telegram.session.SearchCommunitySession;
@@ -62,6 +62,9 @@ public class KMADeadlineBot extends TelegramLongPollingBot {
 			} else if (text.equals("/my_communities")) {
 				sessionContainer.add(new MyCommunitiesSession(this, userId));
 				return;
+			} else if (text.equals("/my_admin_communities")) {
+				sessionContainer.add(new MyAdminSession(this, userId));
+				return;
 			} else if (text.equals("/my_deadlines")) {
 				sessionContainer.add(new MyDeadlinesSession(this, userId));
 				return;
@@ -69,7 +72,7 @@ public class KMADeadlineBot extends TelegramLongPollingBot {
 				sessionContainer.add(new CreateDeadlineSession(this, userId));
 				return;
 			} else if (text.equals("/home")) {
-				sessionContainer.add(new MenuSession(this, userId));
+				sendMenuMessage(userId);
 				return;
 			}
 		}
@@ -81,18 +84,30 @@ public class KMADeadlineBot extends TelegramLongPollingBot {
 
 		// register new user
 		if (update.hasMessage() && update.getMessage().hasText() && update.getMessage().getText().equals("/start")) {
+			
 			if (!userDao.contains(userId)) {
-				sendStartMessage(userId);
-				sessionContainer.add(new MenuSession(this, userId));
-				userDao.insert(new User(userId));
-			} else {
-				sessionContainer.add(new MenuSession(this, userId));
+				userDao.insert(new User(userId));	
 			}
+			
+			sendMenuMessage(userId);
 		}
 	}
 
 	public void sendStartMessage(long userId) {
 		String text = "--- this is @KMADeadlineBot ---";
+		sendText(userId, text);
+	}
+	
+	public void sendMenuMessage(long userId) {
+		sessionContainer.remove(userId); // ! ! !
+		String text = "@KMADeadlineBot\n\n"
+				+ "/create_deadline - <i>створити дедлайн</i>\n"
+				+ "/my_deadlines - <i>мої дедлайни</i>\n"
+				+ "/my_communities - <i>мої спільноти</i>"
+				+ "/my_admin_communities - <i>спільноти де я є адміном</i>"
+				+ "/search_community - <i>шукати спільноту</i>"
+				+ "/create_community - <i>створити спільноту</i>"
+				+ "/home - <i>показати головне меню</i>";
 		sendText(userId, text);
 	}
 

@@ -49,10 +49,6 @@ public class MyCommunitiesSession extends Session {
 		if(update.hasMessage() && update.getMessage().hasText()) {
 			String text = update.getMessage().getText().toLowerCase();
 			
-			if(text.equalsIgnoreCase("/home")) {
-				return new MenuSession(bot, userId);
-			}
-			
 			String communityName = communityNames.stream()
 					.filter(name -> name.toLowerCase().startsWith(text))
 					.sorted()

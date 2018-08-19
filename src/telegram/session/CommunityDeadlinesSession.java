@@ -70,8 +70,8 @@ public class CommunityDeadlinesSession extends Session {
 		messageText += "/community - інформація про спільноту\n";
 		
 		if(community.isAdmin(userId)) {
-			messageText += "/edit - редагувати список дедлайнів\n"
-					+ "/create - створити новий дедлайн\n";
+			messageText += /*"/edit - редагувати список дедлайнів\n"
+					+ */"/create - створити новий дедлайн\n";
 		}
 		
 		messageText += "\n/home - додому";
@@ -99,12 +99,11 @@ public class CommunityDeadlinesSession extends Session {
 			if(text.equalsIgnoreCase("/community")) {
 				return new CommunityOptionsSession(bot, userId, community.getName());
 			
-			} else if (text.equalsIgnoreCase("/edit") && community.isAdmin(userId)) {
+			} /*else if (text.equalsIgnoreCase("/edit") && community.isAdmin(userId)) {
 				// return new EditCommunityDeadlinesSession(bot, userId, community.getName());
 				
-			} else if (text.equalsIgnoreCase("/create") && community.isAdmin(userId)) {
-				return new CreateDeadlineSession(bot, userId);
-				// return new CreateDeadlineSession(bot, userId, community.getName());
+			} */else if (text.equalsIgnoreCase("/create") && community.isAdmin(userId)) {
+				return new CreateDeadlineSession(bot, userId, community.getName());
 			
 			} else if (text.matches("/[1-6]")) {
 				int index = page * DEADLINES_ON_PAGE + Integer.parseInt(text.substring(1)) - 1;

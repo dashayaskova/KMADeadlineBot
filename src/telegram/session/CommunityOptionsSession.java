@@ -169,7 +169,8 @@ public class CommunityOptionsSession extends Session {
 				community.removeMemberId(userId);
 				bot.communityDao.update(community);
 				bot.sendText(userId, "You left successfuly");
-				return new MenuSession(bot, userId);
+				bot.sendMenuMessage(userId);
+				return null;
 			case 16:
 				// TODO
 			case 21:

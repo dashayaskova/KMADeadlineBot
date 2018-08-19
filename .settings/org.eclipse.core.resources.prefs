@@ -1,4 +1,5 @@
 eclipse.preferences.version=1
+encoding//src/telegram/bot/KMADeadlineBot.java=UTF-8
 encoding//src/telegram/session/CommunityDeadlinesSession.java=UTF-8
 encoding//src/telegram/session/CommunityOptionsSession.java=UTF-8
 encoding//src/telegram/session/CreateCommunitySession.java=UTF-8

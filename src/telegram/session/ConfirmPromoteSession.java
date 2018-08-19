@@ -38,7 +38,8 @@ public class ConfirmPromoteSession extends Session {
 		if(update.hasMessage() && update.getMessage().getText().equals("/community")) {
 			return new CommunityOptionsSession(bot, userId, community);
 		}
-		return new MenuSession(bot, userId);
+		bot.sendMenuMessage(userId);
+		return null;
 	}
 
 }
