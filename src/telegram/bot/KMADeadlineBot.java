@@ -31,7 +31,7 @@ public class KMADeadlineBot extends TelegramLongPollingBot {
 
 	@Override
 	public String getBotToken() {
-		return "546487698:AAH-BB8KRJoEsNbPNZQWMWAXlqn4E4dFI64"/* "546487698:AAH-BB8KRJoEsNbPNZQWMWAXlqn4E4dFI64" */;
+		return "562481072:AAHgSvGW56Dr4XDm7lo7HpDuG4GG53oLApA"/* "546487698:AAH-BB8KRJoEsNbPNZQWMWAXlqn4E4dFI64" */;
 	}
 	// https://api.telegram.org/bot546487698:AAH-BB8KRJoEsNbPNZQWMWAXlqn4E4dFI64/editMessageText?chat_id=425956289&message_id=799&text=chang**ed**text
 	// dao
@@ -103,10 +103,10 @@ public class KMADeadlineBot extends TelegramLongPollingBot {
 		String text = "@KMADeadlineBot\n\n"
 				+ "/create_deadline - <i>створити дедлайн</i>\n"
 				+ "/my_deadlines - <i>мої дедлайни</i>\n"
-				+ "/my_communities - <i>мої спільноти</i>"
-				+ "/my_admin_communities - <i>спільноти де я є адміном</i>"
-				+ "/search_community - <i>шукати спільноту</i>"
-				+ "/create_community - <i>створити спільноту</i>"
+				+ "/my_communities - <i>мої спільноти</i>\n"
+				+ "/my_admin_communities - <i>спільноти де я є адміном</i>\n"
+				+ "/search_community - <i>шукати спільноту</i>\n"
+				+ "/create_community - <i>створити спільноту</i>\n"
 				+ "/home - <i>показати головне меню</i>";
 		sendText(userId, text);
 	}

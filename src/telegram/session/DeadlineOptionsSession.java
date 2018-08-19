@@ -35,7 +35,7 @@ public class DeadlineOptionsSession extends Session {
 			//	+ (community.isMember(userId) ? ("/notifications\n") : "")
 				+ (community.isAdmin(userId) ? ("/edit - редагувати дедлайн\n"
 						+ "/delete - delete deadline\n") : "")
-				+ "/community - \n"
+				+ "/community - спільнота для якої створено дедлайн\n"
 				+ "\n/home";
 		bot.sendText(userId, text);
 		
@@ -58,6 +58,8 @@ public class DeadlineOptionsSession extends Session {
 				return null;//new EditNotificationsSession(bot, userId, deadline);
 			} else */if(community.isAdmin(userId) && text.equals("/edit")) {
 				return new EditDeadlineSession(bot, userId, deadline);
+			} else if(text.equals("/community")) {
+				return new CommunityOptionsSession(bot, userId, community);
 			} else if(community.isAdmin(userId) && text.equals("/delete")) {
 				bot.sendText(userId, "Delete ? (/yes | /no)");
 				return new Session(bot, userId) {

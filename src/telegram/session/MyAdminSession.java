@@ -31,7 +31,7 @@ public class MyAdminSession extends Session {
 		if(update.hasMessage()) {
 			if(update.getMessage().getText().startsWith("/_")) {
 				String text = update.getMessage().getText();
-				if(communityNames.contains(text)) {
+				if(communityNames.contains(text.substring(2))) {
 					return new CommunityOptionsSession(bot, userId, update.getMessage().getText().substring(2));
 
 				}

@@ -54,6 +54,7 @@ public class CommunityDeadlinesSession extends Session {
 				
 				int index = i - page * DEADLINES_ON_PAGE + 1;
 				String date = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(deadline.getDate());
+				System.out.println(deadline.getDate().toString());
 				String shortDescription = deadline.getDescription().length() >= 128
 						? deadline.getDescription().substring(0, 128).trim().concat("...")
 						: deadline.getDescription();

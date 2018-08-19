@@ -147,8 +147,7 @@ public class CommunityOptionsSession extends Session {
 			
 			switch (t) {
 			case 11:
-				//TODO constructor
-				return new CreateDeadlineSession(bot, userId);
+				return new CreateDeadlineSession(bot, userId, community.getName());
 			case 12:
 				return new CommunityDeadlinesSession(bot, userId, community);
 			case 13:

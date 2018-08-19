@@ -28,6 +28,7 @@ public class CreateDeadlineSession extends Session {
 	public CreateDeadlineSession(KMADeadlineBot bot, long userId, String communityName) {
 		super(bot, userId);
 		this.communityName = communityName;
+		askDescription();
 	}
 
 	private boolean isAdmin = true;
@@ -53,25 +54,25 @@ public class CreateDeadlineSession extends Session {
 		} else {
 
 			bot.sendText(userId, "--- створення нового дедлайну ---\n\n"
-					+ "1. напиши назву спільноти для якої буде створено дедлайн\n"
-					+ communityNames.stream().collect(Collectors.joining("- ", "\n", "\n\n"))
+					+ "напиши назву спільноти для якої буде створено дедлайн\n"
+					+ communityNames.stream().collect(Collectors.joining("\n- ", "\n- ", "\n\n"))
 					+ "/home - додому");
 		}
 	}
 	
 	private void askDescription() {
 		bot.sendText(userId, "--- створення нового дедлайну ---\n\n"
-				+ "2. напиши короткий опис дедлайну\n\n" + "/home - додому");
+				+ "напиши короткий опис дедлайну\n\n" + "/home - додому");
 	}
 	
 	private void askDate() {
 		bot.sendText(userId, "--- cтворення нового дедлайну ---\n\n"
-				+ "3. надішли дату дедлайну у форматі 'ДД-MM-РРРР ГГ:ХХ:СС'\n\n" + "/home - додому");
+				+ "надішли дату дедлайну у форматі 'ДД-MM-РРРР ГГ:ХХ:СС'\n\n" + "/home - додому");
 	}
 	
 	private void askOtherMessages() {
 		bot.sendText(userId, "--- створення новго дедлайну ---\n\n"
-				+ "4. надішли додаткові повідомлення з текстом, фотографіями та документими.\n"
+				+ "надішли додаткові повідомлення з текстом, фотографіями та документими.\n"
 				+ "коли завершиш напиши команду /build щоб зберегти дедлайн\n\n" + "/home - додому");
 	}
 

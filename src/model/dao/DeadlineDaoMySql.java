@@ -212,6 +212,7 @@ public class DeadlineDaoMySql implements DeadlineDao {
 				deadlineSet.next();
 				
 				Time time = deadlineSet.getTime("date_of_deadline");
+				Date date = deadlineSet.getDate("date_of_deadline");
 				String description = deadlineSet.getString("description_sn");
 				String communityName = deadlineSet.getString("community_name_sn");
 				
@@ -228,7 +229,7 @@ public class DeadlineDaoMySql implements DeadlineDao {
 					} while (messageIdSet.next());
 					
 				}
-				deadlines.add(new Deadline(deadlineId, new Date(time.getTime()), description, communityName, chatId, messageIds));
+				deadlines.add(new Deadline(deadlineId, new Date(time.getTime() + date.getTime()), description, communityName, chatId, messageIds));
 			} catch (SQLException e) { e.printStackTrace(); }
 		});
 		closeConnection();
