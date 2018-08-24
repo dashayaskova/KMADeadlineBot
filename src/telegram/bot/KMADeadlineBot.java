@@ -18,6 +18,7 @@ import telegram.session.CreateCommunitySession;
 import telegram.session.CreateDeadlineSession;
 import telegram.session.MyAdminSession;
 import telegram.session.MyCommunitiesSession;
+import telegram.session.MyCommunitiesSessionDasha;
 import telegram.session.MyDeadlinesSession;
 import telegram.session.SearchCommunitySession;
 import telegram.session.api.SessionContainer;
@@ -60,7 +61,7 @@ public class KMADeadlineBot extends TelegramLongPollingBot {
 				sessionContainer.add(new SearchCommunitySession(this, userId));
 				return;
 			} else if (text.equals("/my_communities")) {
-				sessionContainer.add(new MyCommunitiesSession(this, userId));
+				sessionContainer.add(new MyCommunitiesSessionDasha(this, userId));
 				return;
 			} else if (text.equals("/my_admin_communities")) {
 				sessionContainer.add(new MyAdminSession(this, userId));
